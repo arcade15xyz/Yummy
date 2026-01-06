@@ -1,113 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:yummy/components/category_card.dart';
-import 'package:yummy/components/color_button.dart';
-import 'package:yummy/components/post_card.dart';
-import 'package:yummy/components/restaurant_landscape_card.dart';
-import 'package:yummy/components/theme_button.dart';
-import 'package:yummy/constants.dart';
-import 'package:yummy/models/food_category.dart';
-import 'package:yummy/models/models.dart';
+
+import 'components/color_button.dart';
+import 'components/theme_button.dart';
+import 'constants.dart';
+import 'screens/explore_page.dart';
 
 class Home extends StatefulWidget {
-  const Home(
-      {super.key,
-      required this.changeTheme,
-      required this.changeColor,
-      required this.colorSelected});
+  const Home({
+    super.key,
+    required this.changeTheme,
+    required this.changeColor,
+    required this.colorSelected,
+    required this.appTitle,
+  });
 
+  final ColorSelection colorSelected;
   final void Function(bool useLightMode) changeTheme;
   final void Function(int value) changeColor;
-  final ColorSelection colorSelected;
+  final String appTitle;
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  // Todo track current tab
   int tab = 0;
-
-  // Todo Define tab bar destinations
   List<NavigationDestination> appBarDestinations = const [
     NavigationDestination(
-      icon: Icon(Icons.credit_card),
-      label: 'Category',
-      selectedIcon: Icon(Icons.credit_card),
+      icon: Icon(Icons.home_outlined),
+      label: 'Explore',
+      selectedIcon: Icon(Icons.home),
     ),
     NavigationDestination(
-      icon: Icon(Icons.credit_card),
-      label: 'Post',
-      selectedIcon: Icon(Icons.credit_card),
+      icon: Icon(Icons.list_outlined),
+      label: 'Orders',
+      selectedIcon: Icon(Icons.list),
     ),
     NavigationDestination(
-      icon: Icon(Icons.credit_card),
-      label: 'Restaurant',
-      selectedIcon: Icon(Icons.credit_card),
-    ),
+      icon: Icon(Icons.person_2_outlined),
+      label: 'Account',
+      selectedIcon: Icon(Icons.person),
+    )
   ];
 
   @override
   Widget build(BuildContext context) {
-    //Todo define Pages
     final pages = [
-      //Todo: replace with category card
-      Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300),
-          child: CategoryCard(category: categories[0]),
+      ExplorePage(),
+      const Center(
+        child: Text(
+          'Order Page',
+          style: TextStyle(fontSize: 32.0),
         ),
       ),
-      //Todo: replace with Post card
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: PostCard(post: posts[0]),
+      const Center(
+        child: Text(
+          'Account Page',
+          style: TextStyle(fontSize: 32.0),
         ),
       ),
-      //Todo: Replace with restaurant Landscape card
-      Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300),
-          child: RestaurantLandscapeCard(
-            restaurant: restaurants[0],
-          ),
-        ),
-      )
     ];
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 4,
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(widget.appTitle),
+        elevation: 4.0,
+        backgroundColor: Theme.of(context).colorScheme.background,
         actions: [
-          ThemeButton(changeThemeMode: widget.changeTheme),
+          ThemeButton(
+            changeThemeMode: widget.changeTheme,
+          ),
           ColorButton(
             changeColor: widget.changeColor,
             colorSelected: widget.colorSelected,
-          )
+          ),
         ],
       ),
-      //Todo: Switch between pages.
-      body: IndexedStack(
-        index: tab,
-        children: pages,
-      ),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Text(
-      //     'You Hungry?😝',
-      //     style: Theme.of(context).textTheme.displayLarge,
-      //   ),
-      // ),
-      //Todo: Add bottom navigation bar
+      body: IndexedStack(index: tab, children: pages),
       bottomNavigationBar: NavigationBar(
-        destinations: appBarDestinations,
         selectedIndex: tab,
         onDestinationSelected: (index) {
           setState(() {
             tab = index;
           });
         },
+        destinations: appBarDestinations,
       ),
     );
   }

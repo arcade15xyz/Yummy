@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:yummy/models/models.dart';
+
+import '../models/post.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
 
-  const PostCard({super.key, required this.post});
+  const PostCard({
+    super.key,
+    required this.post,
+  });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context)
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
+
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //Todo: Add CircularAvatar
             CircleAvatar(
               radius: 25,
               backgroundImage: AssetImage(post.profileImageUrl),
             ),
-            //Todo: Add spacing
             const SizedBox(
-              width: 16,
+              width: 16.0,
             ),
-            //Todo: Add expanded widget
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
