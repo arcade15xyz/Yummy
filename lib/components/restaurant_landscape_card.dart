@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:yummy/screens/restaurant_page.dart';
+
 
 import '../models/restaurant.dart';
 
@@ -74,6 +76,7 @@ class _RestaurantLandscapeCardState extends State<RestaurantLandscapeCard> {
             ),
             onTap: () {
               // TODO: Push Restaurant Page
+              Navigator.push(context,MaterialPageRoute(builder: (context)=>RestaurantPage(restaurant: widget.restaurant)));
             },
           ),
         ],
