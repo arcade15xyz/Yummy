@@ -5,7 +5,10 @@ import '../models/food_category.dart';
 
 class CategorySection extends StatelessWidget {
   final List<FoodCategory> categories;
-  const CategorySection({super.key, required this.categories});
+  const CategorySection({
+    super.key,
+    required this.categories,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +18,7 @@ class CategorySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
-            padding: EdgeInsets.only(
-              left: 16.0,
-              bottom: 8.0,
-            ),
+            padding: EdgeInsets.only(left: 16.0, bottom: 8.0),
             child: Text(
               'Categories',
               style: TextStyle(
@@ -35,9 +35,7 @@ class CategorySection extends StatelessWidget {
               itemBuilder: (context, index) {
                 return SizedBox(
                   width: 200,
-                  child: CategoryCard(
-                    category: categories[index],
-                  ),
+                  child: CategoryCard(category: categories[index]),
                 );
               },
             ),

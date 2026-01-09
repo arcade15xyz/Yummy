@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:yummy/screens/restaurant_page.dart';
-
 
 import '../models/restaurant.dart';
 
 class RestaurantLandscapeCard extends StatefulWidget {
   final Restaurant restaurant;
+  final Function() onTap;
 
   const RestaurantLandscapeCard({
     super.key,
     required this.restaurant,
+    required this.onTap,
   });
 
   @override
@@ -74,10 +74,7 @@ class _RestaurantLandscapeCardState extends State<RestaurantLandscapeCard> {
               maxLines: 1,
               style: textTheme.bodySmall,
             ),
-            onTap: () {
-              // TODO: Push Restaurant Page
-              Navigator.push(context,MaterialPageRoute(builder: (context)=>RestaurantPage(restaurant: widget.restaurant)));
-            },
+            onTap: widget.onTap,
           ),
         ],
       ),

@@ -31,10 +31,7 @@ class CategoryCard extends StatelessWidget {
             ],
           ),
           ListTile(
-            title: Text(
-              category.name,
-              style: textTheme.titleSmall,
-            ),
+            title: Text(category.name, style: textTheme.titleSmall),
             subtitle: Text(
               '${category.numberOfRestaurants} places',
               style: textTheme.bodySmall,
