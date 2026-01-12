@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 
 class CartControl extends StatefulWidget {
   final void Function(int) addToCart;
-
-  const CartControl({
-    super.key,
-    required this.addToCart,
-  });
+  const CartControl({required this.addToCart, Key? key}) : super(key: key);
 
   @override
   State<CartControl> createState() => _CartControlState();
@@ -26,48 +22,45 @@ class _CartControlState extends State<CartControl> {
         _buildPlusButton(),
         const Spacer(),
         _buildAddCartButton(),
+        Container(color: Colors.red, height: 44.0)
       ],
     );
   }
 
-  // TODO: Build Minus Button
   Widget _buildMinusButton() {
     return IconButton(
+      icon: const Icon(Icons.remove),
       onPressed: () {
         setState(() {
-          if (_cartNumber > 1) _cartNumber--;
+          if (_cartNumber > 1) {
+            _cartNumber--;
+          }
         });
       },
-      icon: const Icon(Icons.remove),
-      tooltip: 'Decrease cart count',
+      tooltip: 'Decrease Cart Count',
     );
   }
 
-// TODO: Build Cart Number
   Widget _buildCartNumberContainer(ColorScheme colorScheme) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       color: colorScheme.onPrimary,
       child: Text(_cartNumber.toString()),
     );
   }
 
-// TODO: Build Plus Button
   Widget _buildPlusButton() {
     return IconButton(
+      icon: const Icon(Icons.add),
       onPressed: () {
         setState(() {
           _cartNumber++;
         });
       },
-      icon: const Icon(Icons.add),
+      tooltip: 'Increase Cart Count',
     );
   }
 
-// TODO: Build Add Cart Button
   Widget _buildAddCartButton() {
     return FilledButton(
       onPressed: () {
@@ -76,4 +69,5 @@ class _CartControlState extends State<CartControl> {
       child: const Text('Add to Cart'),
     );
   }
+
 }

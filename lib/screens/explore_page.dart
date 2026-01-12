@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import '../api/mock_yummy_service.dart';
-import '../components/restaurant_section.dart';
-import '../components/category_section.dart';
-import '../components/post_section.dart';
-import '../models/cart_manager.dart';
-import '../models/order_manager.dart';
+import '../components/components.dart';
+import '../models/models.dart';
 
 class ExplorePage extends StatelessWidget {
   final mockService = MockYummyService();
@@ -33,8 +30,8 @@ class ExplorePage extends StatelessWidget {
                   restaurants: restaurants,
                   cartManager: cartManager,
                   orderManager: orderManager,),
-                CategorySection(categories: categories),
                 PostSection(posts: posts),
+                CategorySection(categories: categories),
               ]);
         } else {
           return const Center(

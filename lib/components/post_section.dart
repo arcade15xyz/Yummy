@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-
-import '../components/post_card.dart';
-import '../models/post.dart';
+import '../components/components.dart';
+import '../models/models.dart';
 
 class PostSection extends StatelessWidget {
   final List<Post> posts;
-  const PostSection({
-    super.key,
-    required this.posts,
-  });
+  const PostSection({super.key, required this.posts});
 
   @override
   Widget build(BuildContext context) {
@@ -22,23 +18,26 @@ class PostSection extends StatelessWidget {
             child: Text(
               'Friend\'s Activity',
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
           ),
-          ListView.separated(
-            primary: false,
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              return PostCard(post: posts[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(height: 16);
-            },
+          SizedBox(
+            height: 110.0,
+            child: ListView.separated(
+              primary: false,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  width: 300.0,
+                  child: PostCard(post: posts[index]));
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 16);
+              },
+            ),
           ),
         ],
       ),

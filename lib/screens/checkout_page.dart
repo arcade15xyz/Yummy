@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:yummy/models/cart_manager.dart';
-import 'package:yummy/models/order_manager.dart';
+import '../models/models.dart';
 
 class CheckoutPage extends StatefulWidget {
   final CartManager cartManager;
   final Function() didUpdate;
   final Function(Order) onSubmit;
 
-  const CheckoutPage({
-    super.key,
-    required this.cartManager,
-    required this.didUpdate,
-    required this.onSubmit,
-  });
+  const CheckoutPage(
+      {super.key,
+      required this.cartManager,
+      required this.didUpdate,
+      required this.onSubmit});
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  // TODO: Add State Properties
-  final Map<int, Widget> myTab = const <int, Widget>{
+  final Map<int, Widget> myTabs = const <int, Widget>{
     0: Text('Delivery'),
-    2: Text('Self pick-up'),
+    1: Text('Self Pick-Up')
   };
+
   Set<int> selectedSegment = {0};
   TimeOfDay? selectedTime;
   DateTime? selectedDate;
@@ -32,7 +30,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final DateTime _lastDate = DateTime(DateTime.now().year + 1);
   final TextEditingController _nameController = TextEditingController();
 
-  // TODO: Configure Date Format
   String formatDate(DateTime? dateTime) {
     if (dateTime == null) {
       return 'Select Date';
@@ -41,62 +38,50 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return formatter.format(dateTime);
   }
 
-  // TODO: Configure Time of Day
-  String formatTime(TimeOfDay? timeOfDay) {
+  String formatTimeOfDay(TimeOfDay? timeOfDay) {
     if (timeOfDay == null) {
       return 'Select Time';
     }
     final hour = timeOfDay.hour.toString().padLeft(2, '0');
-    final minutes = timeOfDay.minute.toString().padLeft(2, '0');
-    return '$hour:$minutes';
+    final minute = timeOfDay.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 
-  // TODO: Set Selected Segment
   void onSegmentSelected(Set<int> segmentIndex) {
     setState(() {
       selectedSegment = segmentIndex;
     });
   }
 
-  // TODO: Build Segmented Control
   Widget _buildOrderSegmentedType() {
     return SegmentedButton(
       showSelectedIcon: false,
       segments: const [
         ButtonSegment(
-          value: 0,
-          label: Text('Delivery'),
-          icon: Icon(Icons.pedal_bike),
-        ),
+            value: 0, label: Text('Delivery'), icon: Icon(Icons.pedal_bike)),
         ButtonSegment(
-          value: 1,
-          label: Text('Self-Pickup'),
-          icon: Icon(Icons.local_mall),
-        )
+            value: 1, label: Text('Pickup'), icon: Icon(Icons.local_mall)),
       ],
       selected: selectedSegment,
       onSelectionChanged: onSegmentSelected,
     );
   }
 
-  // TODO: Build Name Textfield
   Widget _buildTextField() {
     return TextField(
       controller: _nameController,
       decoration: const InputDecoration(
         labelText: 'Contact Name',
-        hintText: 'Your Name',
       ),
     );
   }
 
-  // TODO: Select Date Picker
   void _selectDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
+      initialDate: selectedDate ?? DateTime.now(),
       firstDate: _firstDate,
       lastDate: _lastDate,
-      initialDate: selectedDate ?? DateTime.now(),
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
@@ -105,18 +90,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  // TODO: Select Time Picker
   void _selectTime(BuildContext context) async {
     final picked = await showTimePicker(
-        context: context,
-        initialEntryMode: TimePickerEntryMode.input,
-        initialTime: selectedTime ?? TimeOfDay.now(),
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: child!,
-          );
-        });
+      context: context,
+      initialEntryMode: TimePickerEntryMode.input,
+      initialTime: selectedTime ?? TimeOfDay.now(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            alwaysUse24HourFormat: true,
+          ),
+          child: child!,
+        );
+      },
+    );
     if (picked != null && picked != selectedTime) {
       setState(() {
         selectedTime = picked;
@@ -124,25 +111,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  // TODO: Build Order Summary
   Widget _buildOrderSummary(BuildContext context) {
     final colorTheme = Theme.of(context).colorScheme;
+
     return Expanded(
       child: ListView.builder(
         itemCount: widget.cartManager.items.length,
         itemBuilder: (context, index) {
           final item = widget.cartManager.itemAt(index);
+
           return Dismissible(
             key: Key(item.id),
             direction: DismissDirection.endToStart,
             background: Container(),
             secondaryBackground: const SizedBox(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(Icons.delete),
-                ],
-              ),
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(Icons.delete),
+                  ]),
             ),
             onDismissed: (direction) {
               setState(() {
@@ -152,20 +139,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
             },
             child: ListTile(
               leading: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8),
-                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   border: Border.all(
                     color: colorTheme.primary,
                     width: 2.0,
                   ),
                 ),
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   child: Text('x${item.quantity}'),
                 ),
               ),
@@ -178,33 +161,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  // TODO: Build Submit Order Button
   Widget _buildSubmitButton() {
     return ElevatedButton(
       onPressed: widget.cartManager.isEmpty
           ? null
           : () {
-              final selectedSegment = this.selectedSegment;
-              final selectedDate = this.selectedDate;
-              final selectedTime = this.selectedTime;
-              final name = _nameController.text;
-              final items = widget.cartManager.items;
+        final selectedSegment = this.selectedSegment;
+        final selectedTime = this.selectedTime;
+        final selectedDate = this.selectedDate;
+        final name = _nameController.text;
+        final items = widget.cartManager.items;
 
-              final order = Order(
-                selectedSegment: selectedSegment,
-                selectedTime: selectedTime,
-                selectedDate: selectedDate,
-                name: name,
-                items: items,
-              );
-              widget.cartManager.resetCart();
-              widget.onSubmit(order);
-            },
+        final order = Order(
+            selectedSegment: selectedSegment,
+            selectedTime: selectedTime,
+            selectedDate: selectedDate,
+            name: name,
+            items: items);
+
+        widget.cartManager.resetCart();
+        widget.onSubmit(order);
+      },
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Text(
-          '''Submit Order - \$${widget.cartManager.totalCost.toStringAsFixed(2)}''',
-        ),
+            '''Submit Order - \$${widget.cartManager.totalCost.toStringAsFixed(2)}'''),
       ),
     );
   }
@@ -214,33 +195,24 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final textTheme = Theme.of(context)
         .textTheme
         .apply(displayColor: Theme.of(context).colorScheme.onSurface);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Order Details',
-              style: textTheme.headlineSmall,
-            ),
-            // TODO: Add Segmented Control
-            const SizedBox(
-              height: 16,
-            ),
+            Text('Order Details', style: textTheme.headlineSmall),
+            const SizedBox(height: 16.0),
             _buildOrderSegmentedType(),
-            // TODO: Add Name Textfield
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16.0),
             _buildTextField(),
-            // TODO: Add Date and Time Picker
             const SizedBox(height: 16.0),
             Row(
               children: [
@@ -249,17 +221,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   onPressed: () => _selectDate(context),
                 ),
                 TextButton(
-                  child: Text(formatTime(selectedTime)),
+                  child: Text(formatTimeOfDay(selectedTime)),
                   onPressed: () => _selectTime(context),
                 ),
               ],
             ),
             const SizedBox(height: 16.0),
-            // TODO: Add Order Summary
-            const Text('Order Summary'),
+            Text('Order Summary'),
             _buildOrderSummary(context),
-            // TODO: Add Submit Order Button
-            _buildSubmitButton()
+            _buildSubmitButton(),
           ],
         ),
       ),

@@ -1,12 +1,23 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
 import 'constants.dart';
 import 'home.dart';
-import 'models/cart_manager.dart';
-import 'models/order_manager.dart';
+import '../models/models.dart';
+import 'screens/screens.dart';
 
 void main() {
   runApp(const Yummy());
+}
+
+/// Allows the ability to scroll by dragging with touch, mouse, and trackpad.
+class CustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad
+      };
 }
 
 class Yummy extends StatefulWidget {
@@ -20,11 +31,88 @@ class _YummyState extends State<Yummy> {
   ThemeMode themeMode = ThemeMode.light;
   ColorSelection colorSelected = ColorSelection.pink;
 
+  /// Authentication to manage user login session
+  // ignore: unused_field
+  final YummyAuth _auth = YummyAuth();
+
   /// Manage user's shopping cart for the items they order.
   final CartManager _cartManager = CartManager();
 
   /// Manage user's orders submitted
   final OrderManager _orderManager = OrderManager();
+
+  // TODO: Initialize GoRouter
+  late final _router = GoRouter(
+    initialLocation: '/login',
+    //Todo: Add App redirect
+    redirect: _appRedirect,
+    routes: [
+      //Todo: Add Login Routes
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => LoginPage(
+          onLogIn: (Credentials credentials) async {
+            _auth
+                .signIn(credentials.username, credentials.password)
+                .then((_) => context.go('/${YummyTab.home.value}'));
+          },
+        ),
+      ),
+      //Todo: Add Home Routes
+      GoRoute(
+          path: '/:tab',
+          builder: (context, state) {
+            return Home(
+                auth: _auth,
+                cartManager: _cartManager,
+                ordersManager: _orderManager,
+                changeTheme: changeThemeMode,
+                changeColor: changeColor,
+                colorSelected: colorSelected,
+                tab: int.tryParse(state.pathParameters['tab'] ?? '') ?? 0);
+          },
+          routes: [
+            //Todo: add Restaurant Route
+            GoRoute(
+                path: 'restaurant/:id',
+                builder: (context, state) {
+                  final id =
+                      int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+                  final restaurant = restaurants[id];
+                  return RestaurantPage(
+                      restaurant: restaurant,
+                      cartManager: _cartManager,
+                      ordersManager: _orderManager);
+                }),
+          ]),
+    ],
+    //Todo: Add Error Handler
+    errorPageBuilder: (context, state) {
+      return MaterialPage(
+        key: state.pageKey,
+        child: Scaffold(
+          body: Center(
+            child: Text(
+              state.error.toString(),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+
+  // TODO: Add Redirect Handler
+  Future<String?> _appRedirect(
+      BuildContext context, GoRouterState state) async {
+    final loggedIn = await _auth.loggedIn;
+    final isOnLoginPage = state.matchedLocation == '/login';
+    if (!loggedIn) {
+      return '/login';
+    } else if (loggedIn && isOnLoginPage) {
+      return '/${YummyTab.home.value}';
+    }
+    return null;
+  }
 
   void changeThemeMode(bool useLightMode) {
     setState(() {
@@ -42,11 +130,13 @@ class _YummyState extends State<Yummy> {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = 'Yummy';
-
-    return MaterialApp(
-      title: appTitle,
-      debugShowCheckedModeBanner: false, // Uncomment to remove Debug banner
+    // TODO: Replace with Router
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      // Uncomment to remove Debug banner
+      routerConfig: _router,
+      title: 'Yummy',
+      scrollBehavior: CustomScrollBehavior(),
       themeMode: themeMode,
       theme: ThemeData(
         colorSchemeSeed: colorSelected.color,
@@ -58,14 +148,7 @@ class _YummyState extends State<Yummy> {
         useMaterial3: true,
         brightness: Brightness.dark,
       ),
-      home: Home(
-        appTitle: appTitle,
-        cartManager: _cartManager,
-        ordersManager: _orderManager,
-        changeTheme: changeThemeMode,
-        changeColor: changeColor,
-        colorSelected: colorSelected,
-      ),
+      // home: LoginPage(onLogIn: (credentials) {}),
     );
   }
 }

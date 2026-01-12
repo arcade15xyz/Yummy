@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../models/post.dart';
+import '../models/models.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -34,16 +33,12 @@ class PostCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    post.comment,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.titleMedium,
-                  ),
-                  Text(
-                    '${post.timestamp} mins ago',
-                    style: textTheme.bodySmall,
-                  ),
+                  Text(post.comment,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleMedium),
+                  Text('${post.timestamp} mins ago',
+                      style: textTheme.bodySmall),
                 ],
               ),
             ),
